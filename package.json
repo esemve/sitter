@@ -8,7 +8,8 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && chmod +x dist/index.js",
+    "build": "tsc && node -e \"require('fs').chmodSync('dist/index.js', '755')\"",
+    "prepare": "npm run build",
     "dev": "tsc --watch",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
