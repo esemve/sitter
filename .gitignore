@@ -9,3 +9,4 @@ settings.yaml
 out/
 .idea/
 coverage/
+.opencode/
