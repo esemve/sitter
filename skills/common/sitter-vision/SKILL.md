@@ -23,7 +23,7 @@ Create a new Sitter project vision. This is the entry point of the development w
 2. **Receive the user's description.**
    Wait for the user to provide a one-sentence summary of what they want to build.
 
-3. **Generate a project name (VISIONNEV).**
+3. **Generate a project name (VISIONNAME).**
    - Derive a concise project name from the user's description.
    - The name MUST be maximum 20 characters.
    - Use only alphanumeric characters (A-Z, a-z, 0-9), underscores, or hyphens.
@@ -34,19 +34,29 @@ Create a new Sitter project vision. This is the entry point of the development w
    ```
    sitter vision --create="VISIONNEV"
    ```
-   Replace `VISIONNEV` with the generated name.
+   Replace `VISIONNAME` with the generated name.
 
 5. **Handle the `already_exists` error.**
    - If the CLI returns an error indicating the vision name already exists, generate a new unique name by appending a number or shortening further.
    - Retry the `sitter vision --create="..."` command with the new name.
    - Repeat until the command succeeds. Do NOT ask the user for a different name unless the CLI explicitly requires it.
 
-6. **Confirm creation.**
-    - Upon success, the CLI creates `sitter/projects/VISIONNEV/vision.md` and sets the project as active in `sitter/.status.json`.
-    - Inform the user that the vision file has been created at `sitter/projects/VISIONNEV/vision.md`.
-    - **All markdown files MUST be written in English.**
+6. **Write the initial vision content.**
+   - Write the following content to `sitter/projects/VISIONNAME/vision.md`:
+     ```markdown
+     # VISIONNAME
 
-7. **Guide the user to the next step.**
+     USER_DESCRIPTION
+     ```
+   - Replace `VISIONNAME` with the generated project name.
+   - Replace `USER_DESCRIPTION` with the exact one-sentence description the user provided.
+   - **All markdown files MUST be written in English.**
+
+7. **Confirm creation.**
+   - Inform the user that the vision file has been created at `sitter/projects/VISIONNAME/vision.md`.
+   - Summarize what was written into the file (project name and the user's description).
+
+8. **Guide the user to the next step.**
    Ask the user:
    - Would they like to sketch out their thoughts directly in `vision.md`, OR
    - Should they invoke `/sitter-brainstorm` to continue the workflow.
