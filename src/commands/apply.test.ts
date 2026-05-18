@@ -6,6 +6,16 @@ import { apply } from './apply.js';
 import { init } from './init.js';
 import { visionCreate } from './vision.js';
 
+vi.mock('../utils/ripgrep-scanner.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../utils/ripgrep-scanner.js')>();
+  return {
+    ...actual,
+    findAiCommentsWithRipgrep: vi.fn((...args: any[]) => actual.findAiCommentsWithRipgrep(...args)),
+  };
+});
+
+import { findAiCommentsWithRipgrep } from '../utils/ripgrep-scanner.js';
+
 let originalCwd: string;
 
 async function captureOutputAsync(fn: () => Promise<void>): Promise<Record<string, unknown>> {
@@ -31,6 +41,7 @@ describe('apply command', () => {
   afterEach(() => {
     process.chdir(originalCwd);
     rmSync(tempDir, { recursive: true, force: true });
+    vi.mocked(findAiCommentsWithRipgrep).mockClear();
   });
 
   it('errors when no active project', async () => {
@@ -198,6 +209,31 @@ describe('apply command', () => {
       success: true,
       clean: true,
       status: 'IMPLEMENT',
+    });
+  });
+
+  it('returns error when ripgrep scan fails', async () => {
+    await init();
+    await visionCreate('my-project');
+
+    // Set project status to REVIEW
+    writeFileSync(
+      join(tempDir, 'sitter', 'projects', 'my-project', '.status.json'),
+      JSON.stringify({ status: 'REVIEW', currentTask: null }),
+      'utf-8'
+    );
+
+    // Override the mocked scanner to throw
+    const mockedFind = vi.mocked(findAiCommentsWithRipgrep);
+    mockedFind.mockImplementationOnce(() => {
+      throw new Error('ripgrep error: mocked scan failure');
+    });
+
+    const result = await captureOutputAsync(() => apply());
+
+    expect(result).toEqual({
+      error: 'RIPGREP_ERROR',
+      message: 'ripgrep error: mocked scan failure',
     });
   });
 });

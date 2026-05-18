@@ -1,8 +1,7 @@
 import { assertActiveProject } from '../state/validation.js';
 import { readProjectStatus, writeProjectStatus } from '../state/project-status.js';
 import { success, error } from '../utils/output.js';
-import { scanFiles } from '../utils/file-scanner.js';
-import { findAiComments } from '../utils/ai-detector.js';
+import { findAiCommentsWithRipgrep } from '../utils/ripgrep-scanner.js';
 
 export async function apply(): Promise<void> {
   let projectName: string;
@@ -19,11 +18,12 @@ export async function apply(): Promise<void> {
     return;
   }
 
-  const aiComments: { file: string; line: number }[] = [];
-
-  for await (const file of scanFiles(process.cwd())) {
-    const comments = findAiComments(file.path, file.content);
-    aiComments.push(...comments);
+  let aiComments;
+  try {
+    aiComments = findAiCommentsWithRipgrep(process.cwd());
+  } catch (err) {
+    error('RIPGREP_ERROR', err instanceof Error ? err.message : String(err));
+    return;
   }
 
   if (aiComments.length > 0) {
