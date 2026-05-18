@@ -10,7 +10,7 @@ vi.mock('../utils/ripgrep-scanner.js', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../utils/ripgrep-scanner.js')>();
   return {
     ...actual,
-    findAiCommentsWithRipgrep: vi.fn((...args: any[]) => actual.findAiCommentsWithRipgrep(...args)),
+    findAiCommentsWithRipgrep: vi.fn((baseDir: string) => actual.findAiCommentsWithRipgrep(baseDir)),
   };
 });
 
