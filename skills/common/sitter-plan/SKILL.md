@@ -7,7 +7,7 @@ description: Create a detailed implementation plan and task breakdown based on t
 
 ## Purpose
 
-Generate a comprehensive implementation plan (`plan.md`) and a granular task list (`tasks.md`) for the active project.
+Generate a comprehensive implementation plan (`plan.md`) and a granular task list (`tasks.md`) for the active project, then present them to the user for review and iterative refinement.
 
 ## Preconditions
 
@@ -46,7 +46,7 @@ Generate a comprehensive implementation plan (`plan.md`) and a granular task lis
    - Use RFC 2119 keywords (MUST, SHOULD, MAY, SHALL) where appropriate.
    - **All markdown files MUST be written in English.**
 
-5. **Write `tasks.md`.
+5. **Write `tasks.md`.**
    - Create or overwrite `sitter/projects/<PROJECT_NAME>/tasks.md`.
    - Use the following Markdown format:
 
@@ -70,12 +70,39 @@ Generate a comprehensive implementation plan (`plan.md`) and a granular task lis
       - Use RFC 2119 keywords (MUST, SHOULD, MAY, SHALL) for requirements.
     - **All markdown files MUST be written in English.**
 
-6. **Confirm completion.**
-   Inform the user that the plan and tasks are ready and they can invoke `/sitter-implement` or `/sitter-vibecode` to begin development.
+6. **Present the plan and tasks to the user.**
+   - Read `plan.md` and `tasks.md`.
+   - Present the **complete, verbatim contents** of both files to the user. Copy the entire text of each file into your response without summarizing, paraphrasing, or condensing. The user MUST see every line exactly as it appears in the files.
+   - Format the output using Markdown so it renders nicely: use a top-level heading for the file name, wrap each file's contents in a fenced code block with the `markdown` language identifier, and add clear visual separation between the two files.
+   - Ask the user whether they would like any modifications.
+   - The AI MUST communicate with the user in the same language the user is speaking.
+   - The AI MUST NOT start `/sitter-implement` or `/sitter-yolo` on its own.
+
+7. **Handle user modification requests.**
+   If the user asks for changes, analyze whether the change affects the **foundations of the plan**:
+   - A foundational change affects architecture, core scope, major components, or the overall approach (e.g., switching from REST to GraphQL, adding an entirely new module, changing the primary framework).
+   - A superficial change affects task granularity, ordering, subtasks, wording, or minor additions that do not alter the plan's core structure.
+
+   **If the change is foundational:**
+   - Rewrite `plan.md` from scratch to reflect the new requirements.
+   - Rewrite `tasks.md` from scratch based on the updated plan.
+   - Return to step 6: present the updated files to the user and ask again for feedback.
+
+   **If the change is superficial:**
+   - Modify only `tasks.md` to incorporate the user's request (e.g., add a subtask, reorder steps, reword a task, split or merge tasks).
+   - Leave `plan.md` unchanged.
+   - Return to step 6: present the updated tasks to the user and ask again for feedback.
+
+   **Repeat step 7 until the user confirms they are satisfied.**
+
+8. **Confirm completion.**
+   Only when the user explicitly indicates satisfaction with the plan and tasks:
+   - Inform the user that the plan and tasks are ready.
+   - Tell the user they can invoke `/sitter-implement` or `/sitter-yolo` to begin development.
+   - Do NOT invoke either command automatically.
 
 ## Error Handling
 
 - If `sitter active-vision` fails or returns no output, verify that a project is active and `vision.md` exists.
 - If writing `plan.md` or `tasks.md` fails, report the exact filesystem error and retry once.
 - If the vision is ambiguous, do NOT proceed to writing files until clarifications are obtained from the user.
-
