@@ -1,5 +1,5 @@
 {
-  "name": "sitter",
+  "name": "@agentstuff/sitter",
   "version": "0.1.0",
   "description": "A TypeScript CLI tool for AI agent workflow management",
   "type": "module",
@@ -23,6 +23,11 @@
   ],
   "author": "",
   "license": "MIT",
+  "files": [
+    "dist",
+    "skills",
+    "README.md"
+  ],
   "engines": {
     "node": ">=20.19.0"
   },

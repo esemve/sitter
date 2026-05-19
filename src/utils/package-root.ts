@@ -19,7 +19,7 @@ export function resolvePackageRoot(): string {
     if (existsSync(packageJsonPath)) {
       try {
         const pkg = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-        if (pkg.name === 'sitter') {
+        if (pkg.name === 'sitter' || pkg.name === '@agentstuff/sitter') {
           return currentDir;
         }
       } catch {
