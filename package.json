@@ -1,6 +1,6 @@
 {
   "name": "@agentstuff/sitter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A TypeScript CLI tool for AI agent workflow management",
   "type": "module",
   "bin": {

@@ -86,6 +86,10 @@ jobs:
         if: steps.check_tag.outputs.exists == 'false'
         run: pnpm run build
 
+      - name: Prepare npm README
+        if: steps.check_tag.outputs.exists == 'false'
+        run: cp docs/README-npm.md README.md
+
       - name: Pack npm tarball
         if: steps.check_tag.outputs.exists == 'false'
         run: pnpm pack
