@@ -20,10 +20,12 @@ export const SKILL_NAMES = [
 const AGENT_PATHS: Record<string, (home: string) => string> = {
   opencode: (home: string) => join(home, '.config', 'opencode', 'skills'),
   claude: (home: string) => join(home, '.claude', 'skills'),
+  kilo: (home: string) => join(home, '.config', 'kilo', 'skills'),
 };
 
 const COMMAND_PATHS: Record<string, (home: string) => string> = {
   opencode: (home: string) => join(home, '.config', 'opencode', 'commands'),
+  kilo: (home: string) => join(home, '.config', 'kilo', 'commands'),
 };
 
 const SKILL_DESCRIPTIONS: Record<string, string> = {
@@ -58,7 +60,7 @@ export function extractBody(content: string): string {
 
 export function generateSkillFrontmatter(agent: string, skillName: string): string {
   const description = SKILL_DESCRIPTIONS[skillName] ?? skillName;
-  if (agent === 'opencode') {
+  if (agent === 'opencode' || agent === 'kilo') {
     return `---\nname: ${skillName}\ndescription: ${description}\n---\n`;
   }
   if (agent === 'claude') {
@@ -70,7 +72,7 @@ export function generateSkillFrontmatter(agent: string, skillName: string): stri
 
 export function generateCommandFile(agent: string, skillName: string): string {
   const description = SKILL_DESCRIPTIONS[skillName] ?? skillName;
-  if (agent === 'opencode') {
+  if (agent === 'opencode' || agent === 'kilo') {
     return `---\ndescription: ${description}\n---\n\nLoad and execute the "${skillName}" skill.\n`;
   }
   return '';
@@ -85,12 +87,12 @@ export async function install(options: InstallOptions = {}): Promise<boolean> {
   const agent = options.agent;
 
   if (!agent) {
-    console.error(chalk.red('Error: Please specify --agent <opencode|claude>'));
+    console.error(chalk.red('Error: Please specify --agent <claude|kilo|opencode>'));
     return false;
   }
 
   if (!AGENT_PATHS[agent]) {
-    console.error(chalk.red(`Error: Agent "${agent}" is not supported. Supported: opencode, claude`));
+    console.error(chalk.red(`Error: Agent "${agent}" is not supported. Supported: Claude Code, Kilo CLI, OpenCode`));
     return false;
   }
 
@@ -150,9 +152,9 @@ export async function install(options: InstallOptions = {}): Promise<boolean> {
     }
   }
 
-  // Install command files (OpenCode only)
+  // Install command files (OpenCode and Kilo CLI)
   const installedCommands: string[] = [];
-  if (commandDir && agent === 'opencode') {
+  if (commandDir && (agent === 'opencode' || agent === 'kilo')) {
     try {
       await mkdir(commandDir, { recursive: true });
     } catch (err) {

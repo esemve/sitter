@@ -52,6 +52,7 @@ describe('install command', () => {
     const result = await captureOutputAsync(() => install({ agent: 'unknown' }));
 
     expect(result.errors.some(e => e.includes('UNSUPPORTED_AGENT') || e.includes('not supported'))).toBe(true);
+    expect(result.errors.some(e => e.includes('Claude Code, Kilo CLI, OpenCode'))).toBe(true);
   });
 
   it('errors when source skill files are missing', async () => {
@@ -110,6 +111,27 @@ describe('install command', () => {
     }
   });
 
+  it('installs skills and commands for kilo', async () => {
+    const result = await captureOutputAsync(() => install({ agent: 'kilo' }));
+    expect(result.logs.some(l => l.includes('installed successfully'))).toBe(true);
+    for (const skill of SKILL_NAMES) {
+      const skillPath = join(tempHome, '.config', 'kilo', 'skills', skill, 'SKILL.md');
+      expect(existsSync(skillPath)).toBe(true);
+      const skillContent = readFileSync(skillPath, 'utf-8');
+      expect(skillContent).toMatch(/^---\n/);
+      expect(skillContent).toContain(`name: ${skill}`);
+      expect(skillContent).toContain('description:');
+      expect(skillContent).not.toContain('when_to_use:');
+      expect(skillContent).toContain(`# /${skill}`);
+      const commandPath = join(tempHome, '.config', 'kilo', 'commands', `${skill}.md`);
+      expect(existsSync(commandPath)).toBe(true);
+      const commandContent = readFileSync(commandPath, 'utf-8');
+      expect(commandContent).toMatch(/^---\n/);
+      expect(commandContent).toContain('description:');
+      expect(commandContent).toContain(`Load and execute the "${skill}" skill.`);
+    }
+  });
+
   it('returns permission error when target directory is not writable', async () => {
     const configDir = join(tempHome, '.config');
     mkdirSync(configDir);
@@ -156,6 +178,14 @@ describe('generateSkillFrontmatter', () => {
     expect(fm).toContain('when_to_use:');
     expect(fm).not.toContain('model:');
   });
+
+  it('generates kilo frontmatter', () => {
+    const fm = generateSkillFrontmatter('kilo', 'sitter-vision');
+    expect(fm).toContain('name: sitter-vision');
+    expect(fm).toContain('description:');
+    expect(fm).not.toContain('when_to_use');
+    expect(fm).not.toContain('trigger');
+  });
 });
 
 describe('generateCommandFile', () => {
@@ -169,6 +199,12 @@ describe('generateCommandFile', () => {
     const cmd = generateCommandFile('claude', 'sitter-vision');
     expect(cmd).toBe('');
   });
+
+  it('generates kilo command file', () => {
+    const cmd = generateCommandFile('kilo', 'sitter-vision');
+    expect(cmd).toContain('description:');
+    expect(cmd).toContain('Load and execute the "sitter-vision" skill.');
+  });
 });
 
 describe('getTargetPath', () => {
@@ -178,6 +214,10 @@ describe('getTargetPath', () => {
 
   it('returns claude path', () => {
     expect(getTargetPath('claude')).toMatch(/\.claude[/\\]skills$/);
+  });
+
+  it('returns kilo path', () => {
+    expect(getTargetPath('kilo')).toMatch(/\.config[/\\]kilo[/\\]skills$/);
   });
 
   it('throws for unsupported agent', () => {
@@ -192,5 +232,9 @@ describe('getCommandTargetPath', () => {
 
   it('returns null for claude', () => {
     expect(getCommandTargetPath('claude')).toBeNull();
+  });
+
+  it('returns kilo command path', () => {
+    expect(getCommandTargetPath('kilo')).toMatch(/\.config[/\\]kilo[/\\]commands$/);
   });
 });

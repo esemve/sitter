@@ -20,7 +20,7 @@ vi.mock('os', async (importOriginal) => {
 // ---- getAgentSelection mock ----
 
 const { getAgentSelectionMock } = vi.hoisted(() => ({
-  getAgentSelectionMock: vi.fn<[string | undefined], Promise<'opencode' | 'claude' | 'both'>>(),
+  getAgentSelectionMock: vi.fn<[string | undefined], Promise<string[]>>(),
 }));
 
 vi.mock('../utils/prompt.js', () => ({
@@ -30,7 +30,7 @@ vi.mock('../utils/prompt.js', () => ({
 
 // ---- Tests ----
 
-describe('install action handler — "both" orchestration', () => {
+describe('install action handler — orchestration', () => {
   let tempHome: string;
 
   beforeEach(async () => {
@@ -49,8 +49,8 @@ describe('install action handler — "both" orchestration', () => {
     }
   });
 
-  it('calls install for both opencode and claude when "both" is selected', async () => {
-    getAgentSelectionMock.mockResolvedValue('both');
+  it('calls install for both opencode and claude when both are selected', async () => {
+    getAgentSelectionMock.mockResolvedValue(['opencode', 'claude']);
 
     // Dynamically import handleInstall to pick up the mocked getAgentSelection.
     const { handleInstall } = await import('./install-action.js');
@@ -70,8 +70,8 @@ describe('install action handler — "both" orchestration', () => {
     }
   });
 
-  it('delegates single-agent selection directly (not "both")', async () => {
-    getAgentSelectionMock.mockResolvedValue('claude');
+  it('delegates single-agent selection directly', async () => {
+    getAgentSelectionMock.mockResolvedValue(['claude']);
 
     const { handleInstall } = await import('./install-action.js');
 
@@ -86,6 +86,48 @@ describe('install action handler — "both" orchestration', () => {
 
     for (const skill of SKILL_NAMES) {
       expect(existsSync(join(claudeSkills, skill, 'SKILL.md'))).toBe(true);
+    }
+  });
+
+  it('installs only kilo when selected', async () => {
+    getAgentSelectionMock.mockResolvedValue(['kilo']);
+
+    const { handleInstall } = await import('./install-action.js');
+
+    await handleInstall({});
+
+    const opencodeSkills = join(tempHome, '.config', 'opencode', 'skills');
+    const claudeSkills = join(tempHome, '.claude', 'skills');
+    const kiloSkills = join(tempHome, '.config', 'kilo', 'skills');
+
+    expect(existsSync(opencodeSkills)).toBe(false);
+    expect(existsSync(claudeSkills)).toBe(false);
+    expect(existsSync(kiloSkills)).toBe(true);
+
+    for (const skill of SKILL_NAMES) {
+      expect(existsSync(join(kiloSkills, skill, 'SKILL.md'))).toBe(true);
+    }
+  });
+
+  it('installs all three when selected', async () => {
+    getAgentSelectionMock.mockResolvedValue(['opencode', 'claude', 'kilo']);
+
+    const { handleInstall } = await import('./install-action.js');
+
+    await handleInstall({});
+
+    const opencodeSkills = join(tempHome, '.config', 'opencode', 'skills');
+    const claudeSkills = join(tempHome, '.claude', 'skills');
+    const kiloSkills = join(tempHome, '.config', 'kilo', 'skills');
+
+    expect(existsSync(opencodeSkills)).toBe(true);
+    expect(existsSync(claudeSkills)).toBe(true);
+    expect(existsSync(kiloSkills)).toBe(true);
+
+    for (const skill of SKILL_NAMES) {
+      expect(existsSync(join(opencodeSkills, skill, 'SKILL.md'))).toBe(true);
+      expect(existsSync(join(claudeSkills, skill, 'SKILL.md'))).toBe(true);
+      expect(existsSync(join(kiloSkills, skill, 'SKILL.md'))).toBe(true);
     }
   });
 });

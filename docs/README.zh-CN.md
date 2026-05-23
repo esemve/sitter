@@ -61,10 +61,11 @@ Sitter 是一个轻量级的 AI 原生工作流管理器，帮助你和你的 AI
 
 ## 支持的工具
 
-| 工具               | 安装命令                           |
-|------------------|-----------------------------------|
-| **Claude Code**   | `sitter install --agent=claude`   |
-| **Opencode**      | `sitter install --agent=opencode` |
+| 工具              | 安装命令                           |
+|-----------------|-----------------------------------|
+| **Claude Code** | `sitter install --agent=claude`   |
+| **Kilo CLI**    | `sitter install --agent=kilo`     |
+| **OpenCode**    | `sitter install --agent=opencode` |
 
 ## 安装
 

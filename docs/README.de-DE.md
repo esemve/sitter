@@ -58,11 +58,12 @@ Während des Review-Prozesses – egal ob Sie den Code selbst ändern oder die K
 
 Während der Implementierung fügt die KI vor jeder Code-Änderung einen Kommentar hinzu, der die Überlegungen des LLM transparent macht, das Review vereinfacht und es ermöglicht, Abdriften frühzeitig zu erkennen und zu korrigieren.
 
-## Unterstützte Tools
+## Unterstützte Agents
 
 | Tool             | Installieren                      |
 |------------------|-----------------------------------|
 | **Claude Code**  | `sitter install --agent=claude`   |
+| **Kilo CLI**    | `sitter install --agent=kilo`     |
 | **Opencode**     | `sitter install --agent=opencode` |
 
 ## Installation

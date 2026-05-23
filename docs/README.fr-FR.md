@@ -61,10 +61,11 @@ Pendant l'implémentation, l'IA ajoute un commentaire avant chaque modification 
 
 ## Outils supportés
 
-| Outil             | Installation                      |
-|-------------------|-----------------------------------|
-| **Claude Code**   | `sitter install --agent=claude`   |
-| **Opencode**      | `sitter install --agent=opencode` |
+| Outil           | Installation                      |
+|-----------------|-----------------------------------|
+| **Claude Code** | `sitter install --agent=claude`   |
+| **Kilo CLI**    | `sitter install --agent=kilo`     |
+| **OpenCode**    | `sitter install --agent=opencode` |
 
 
 ## Installation

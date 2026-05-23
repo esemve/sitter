@@ -60,10 +60,11 @@ Durante la implementación, la IA añade un comentario antes de cada cambio de c
 
 ## Herramientas compatibles
 
-| Herramienta       | Instalar                          |
-|-------------------|-----------------------------------|
-| **Claude Code**   | `sitter install --agent=claude`   |
-| **Opencode**      | `sitter install --agent=opencode` |
+| Herramienta     | Instalar                          |
+|-----------------|-----------------------------------|
+| **Claude Code** | `sitter install --agent=claude`   |
+| **Kilo CLI**    | `sitter install --agent=kilo`     |
+| **OpenCode**    | `sitter install --agent=opencode` |
 
 
 ## Instalación

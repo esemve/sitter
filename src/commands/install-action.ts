@@ -7,19 +7,16 @@ import { error } from '../utils/output.js';
  *
  * - If --agent is specified, that agent is installed directly.
  * - If no --agent and running in a TTY, an interactive prompt asks the user
- *   to choose opencode, claude, or both.
- * - If both is chosen, opencode is installed first; claude is installed second.
+ *   to choose one or more agents.
+ * - All selected agents are installed sequentially.
  */
 export async function handleInstall(options: { agent?: string }): Promise<void> {
   try {
     const selection = await getAgentSelection(options.agent);
 
-    if (selection === 'both') {
-      const opencodeOk = await install({ agent: 'opencode' });
-      if (!opencodeOk) return;
-      await install({ agent: 'claude' });
-    } else {
-      await install({ agent: selection });
+    for (const agent of selection) {
+      const ok = await install({ agent });
+      if (!ok) return;
     }
   } catch (err) {
     if (err instanceof Error && err.message === 'unsupported_agent') {

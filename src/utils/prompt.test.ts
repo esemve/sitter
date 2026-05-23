@@ -51,18 +51,18 @@ beforeEach(() => {
 // ---- Tests ----
 
 describe('promptForAgent', () => {
-  it('selects only opencode with space, enter', async () => {
+  it('selects only claude with space, enter', async () => {
     const input = fakeReadable();
     const output = fakeWritable();
     const promise = promptForAgent(input, output);
     emitKeypress(input, '', { name: 'space' });
     emitKeypress(input, '', { name: 'return' });
     const result = await promise;
-    expect(result).toBe('opencode');
+    expect(result).toEqual(['claude']);
     expect(readline.emitKeypressEvents).toHaveBeenCalledWith(input);
   });
 
-  it('selects only claude with down, space, enter', async () => {
+  it('selects only kilo with down, space, enter', async () => {
     const input = fakeReadable();
     const output = fakeWritable();
     const promise = promptForAgent(input, output);
@@ -70,10 +70,10 @@ describe('promptForAgent', () => {
     emitKeypress(input, '', { name: 'space' });
     emitKeypress(input, '', { name: 'return' });
     const result = await promise;
-    expect(result).toBe('claude');
+    expect(result).toEqual(['kilo']);
   });
 
-  it('selects both with space, down, space, enter', async () => {
+  it('selects claude and kilo with space, down, space, enter', async () => {
     const input = fakeReadable();
     const output = fakeWritable();
     const promise = promptForAgent(input, output);
@@ -82,7 +82,7 @@ describe('promptForAgent', () => {
     emitKeypress(input, '', { name: 'space' });
     emitKeypress(input, '', { name: 'return' });
     const result = await promise;
-    expect(result).toBe('both');
+    expect(result).toEqual(['claude', 'kilo']);
   });
 
   it('wraps cursor from top to bottom on up arrow', async () => {
@@ -92,7 +92,7 @@ describe('promptForAgent', () => {
     emitKeypress(input, '', { name: 'up' });
     await new Promise((r) => setTimeout(r, 0));
     const data = output.getData();
-    expect(data).toContain('> [ ] claude');
+    expect(data).toContain('> [ ] OpenCode');
     // Resolve promise so test completes cleanly.
     emitKeypress(input, '', { name: 'space' });
     emitKeypress(input, '', { name: 'return' });
@@ -103,11 +103,12 @@ describe('promptForAgent', () => {
     const input = fakeReadable();
     const output = fakeWritable();
     const promise = promptForAgent(input, output);
-    emitKeypress(input, '', { name: 'down' }); // cursor → claude
-    emitKeypress(input, '', { name: 'down' }); // cursor wraps → opencode
+    emitKeypress(input, '', { name: 'down' }); // cursor → kilo
+    emitKeypress(input, '', { name: 'down' }); // cursor → opencode
+    emitKeypress(input, '', { name: 'down' }); // cursor wraps → claude
     await new Promise((r) => setTimeout(r, 0));
     const data = output.getData();
-    expect(data).toContain('> [ ] opencode');
+    expect(data).toContain('> [ ] Claude Code');
     // Resolve promise so test completes cleanly.
     emitKeypress(input, '', { name: 'space' });
     emitKeypress(input, '', { name: 'return' });
@@ -118,17 +119,17 @@ describe('promptForAgent', () => {
     const input = fakeReadable();
     const output = fakeWritable();
     const promise = promptForAgent(input, output);
-    emitKeypress(input, '', { name: 'space' }); // check opencode
-    emitKeypress(input, '', { name: 'space' }); // uncheck opencode
-    emitKeypress(input, '', { name: 'down' }); // move to claude
     emitKeypress(input, '', { name: 'space' }); // check claude
+    emitKeypress(input, '', { name: 'space' }); // uncheck claude
+    emitKeypress(input, '', { name: 'down' }); // move to kilo
+    emitKeypress(input, '', { name: 'space' }); // check kilo
     emitKeypress(input, '', { name: 'return' }); // confirm
     const result = await promise;
-    expect(result).toBe('claude');
+    expect(result).toEqual(['kilo']);
     const data = output.getData();
-    // Verify the FINAL rendered state for opencode is unchecked (not [x]).
-    const lastOpencodeIdx = data.lastIndexOf('opencode');
-    expect(data.slice(lastOpencodeIdx - 4, lastOpencodeIdx)).not.toBe('[x] ');
+    // Verify the FINAL rendered state for claude is unchecked (not [x]).
+    const lastClaudeIdx = data.lastIndexOf('Claude Code');
+    expect(data.slice(lastClaudeIdx - 4, lastClaudeIdx)).not.toBe('[x] ');
   });
 
   it('shows warning on empty submit and resolves after selection', async () => {
@@ -141,7 +142,7 @@ describe('promptForAgent', () => {
     emitKeypress(input, '', { name: 'space' });
     emitKeypress(input, '', { name: 'return' });
     const result = await promise;
-    expect(result).toBe('opencode');
+    expect(result).toEqual(['claude']);
   });
 
   it('dismisses warning after space press', async () => {
@@ -162,7 +163,7 @@ describe('promptForAgent', () => {
 
     emitKeypress(input, '', { name: 'return' });
     const result = await promise;
-    expect(result).toBe('opencode');
+    expect(result).toEqual(['claude']);
   });
 
   it('calls process.exit(0) on ctrl+c and performs cleanup', async () => {
@@ -226,19 +227,50 @@ describe('promptForAgent', () => {
     emitKeypress(input, '', { name: 'space' });
     emitKeypress(input, '', { name: 'return' });
     const result = await promise;
-    expect(result).toBe('opencode');
+    expect(result).toEqual(['claude']);
+  });
+
+  it('selects only opencode with down, down, space, enter', async () => {
+    const input = fakeReadable();
+    const output = fakeWritable();
+    const promise = promptForAgent(input, output);
+    emitKeypress(input, '', { name: 'down' });
+    emitKeypress(input, '', { name: 'down' });
+    emitKeypress(input, '', { name: 'space' });
+    emitKeypress(input, '', { name: 'return' });
+    const result = await promise;
+    expect(result).toEqual(['opencode']);
+  });
+
+  it('selects all three with space, down, space, down, space, enter', async () => {
+    const input = fakeReadable();
+    const output = fakeWritable();
+    const promise = promptForAgent(input, output);
+    emitKeypress(input, '', { name: 'space' });
+    emitKeypress(input, '', { name: 'down' });
+    emitKeypress(input, '', { name: 'space' });
+    emitKeypress(input, '', { name: 'down' });
+    emitKeypress(input, '', { name: 'space' });
+    emitKeypress(input, '', { name: 'return' });
+    const result = await promise;
+    expect(result).toEqual(['claude', 'kilo', 'opencode']);
   });
 });
 
 describe('getAgentSelection', () => {
-  it('returns "opencode" immediately when optionsAgent is "opencode"', async () => {
+  it('returns ["opencode"] immediately when optionsAgent is "opencode"', async () => {
     const result = await getAgentSelection('opencode');
-    expect(result).toBe('opencode');
+    expect(result).toEqual(['opencode']);
   });
 
-  it('returns "claude" immediately when optionsAgent is "claude"', async () => {
+  it('returns ["claude"] immediately when optionsAgent is "claude"', async () => {
     const result = await getAgentSelection('claude');
-    expect(result).toBe('claude');
+    expect(result).toEqual(['claude']);
+  });
+
+  it('returns ["kilo"] immediately when optionsAgent is "kilo"', async () => {
+    const result = await getAgentSelection('kilo');
+    expect(result).toEqual(['kilo']);
   });
 
   it('throws "unsupported_agent" for invalid optionsAgent', async () => {

@@ -58,12 +58,13 @@ A review során — akár te nyúlsz bele a kódba, akár az AI-t kéred meg rá
 
 Implementáció közben az AI minden egyes kódváltoztatás elé egy-egy kommentet ír, ezzel átláthatóvá téve a gondolkodását, megkönnyítve a review-t, és lehetővé téve, hogy az elcsúszást már a legelején kiszúrd és korrigáld.
 
-## Támogatott eszközök
+## Támogatott agentek
 
-| Eszköz           | Telepítés                         |
-|------------------|-----------------------------------|
-| **Claude Code**  | `sitter install --agent=claude`   |
-| **Opencode**     | `sitter install --agent=opencode` |
+| Eszköz          | Telepítés                         |
+|-----------------|-----------------------------------|
+| **Claude Code** | `sitter install --agent=claude`   |
+| **Kilo CLI**    | `sitter install --agent=kilo`     |
+| **OpenCode**    | `sitter install --agent=opencode` |
 
 
 ## Telepítés

@@ -60,12 +60,13 @@ During the review process, whether you modify the code yourself or ask the AI to
 
 During implementation, the AI adds a comment before every code change, making the LLM’s reasoning transparent, simplifying review, and allowing drift to be detected and corrected early.
 
-## Supported tools
+## Supported agents
 
-| Tool             | Install                           |
-|------------------|-----------------------------------|
-| **Claude Code**  | `sitter install --agent=claude`   |
-| **Opencode** | `sitter install --agent=opencode` |
+| Tool            | Install                           |
+|-----------------|-----------------------------------|
+| **Claude Code** | `sitter install --agent=claude`   |
+| **Kilo CLI**    | `sitter install --agent=kilo`     |
+| **OpenCode**    | `sitter install --agent=opencode` |
 
 
 ## Installation

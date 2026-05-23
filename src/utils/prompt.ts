@@ -2,7 +2,7 @@ import { emitKeypressEvents } from 'readline';
 
 interface AgentItem {
   label: string;
-  value: 'opencode' | 'claude';
+  value: string;
 }
 
 /**
@@ -10,18 +10,19 @@ interface AgentItem {
  *
  * @param input - Readable stream for reading user input (default: process.stdin)
  * @param output - Writable stream for writing prompts (default: process.stdout)
- * @returns The selected agent string: 'opencode', 'claude', or 'both'
+ * @returns Array of selected agent values.
  */
 export async function promptForAgent(
   input: NodeJS.ReadableStream = process.stdin,
   output: NodeJS.WritableStream = process.stdout,
-): Promise<'opencode' | 'claude' | 'both'> {
+): Promise<string[]> {
   const items: AgentItem[] = [
-    { label: 'opencode', value: 'opencode' },
-    { label: 'claude', value: 'claude' },
+    { label: 'Claude Code', value: 'claude' },
+    { label: 'Kilo CLI', value: 'kilo' },
+    { label: 'OpenCode', value: 'opencode' },
   ];
 
-  return new Promise<'opencode' | 'claude' | 'both'>((resolve) => {
+  return new Promise<string[]>((resolve) => {
     let cursorIndex = 0;
     const checked = new Set<number>();
     let warning = false;
@@ -55,12 +56,14 @@ export async function promptForAgent(
       output.write('\n');
     }
 
-    function computeResult(): 'opencode' | 'claude' | 'both' {
-      const opencodeChecked = checked.has(0);
-      const claudeChecked = checked.has(1);
-      if (opencodeChecked && claudeChecked) return 'both';
-      if (claudeChecked) return 'claude';
-      return 'opencode';
+    function computeResult(): string[] {
+      const selected: string[] = [];
+      for (let i = 0; i < items.length; i++) {
+        if (checked.has(i)) {
+          selected.push(items[i].value);
+        }
+      }
+      return selected;
     }
 
     function render(): void {
@@ -177,16 +180,16 @@ export async function promptForAgent(
  * 3. Otherwise (non-interactive/no flag), throw an error asking the user to supply --agent.
  *
  * @param optionsAgent - Agent string from the `--agent` CLI option, or undefined.
- * @returns The resolved agent: 'opencode', 'claude', or 'both'.
+ * @returns Array of selected agent values.
  * @throws Error with message 'unsupported_agent' for invalid --agent values.
  * @throws Error describing the non-interactive-mode requirement when no TTY is present.
  */
 export async function getAgentSelection(
   optionsAgent?: string,
-): Promise<'opencode' | 'claude' | 'both'> {
+): Promise<string[]> {
   if (optionsAgent) {
-    if (optionsAgent === 'opencode' || optionsAgent === 'claude') {
-      return optionsAgent;
+    if (optionsAgent === 'opencode' || optionsAgent === 'claude' || optionsAgent === 'kilo') {
+      return [optionsAgent];
     }
     throw new Error('unsupported_agent');
   }
@@ -196,6 +199,6 @@ export async function getAgentSelection(
   }
 
   throw new Error(
-    'No --agent specified and running in non-interactive mode. Use --agent <opencode|claude>.',
+    'No --agent specified and running in non-interactive mode. Use --agent <opencode|claude|kilo>.',
   );
 }
