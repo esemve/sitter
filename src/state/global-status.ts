@@ -2,6 +2,7 @@ import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { globalStatusPath } from '../utils/paths.js';
 import { atomicWrite } from '../utils/atomic-write.js';
+import { packageVersion } from '../utils/version.js';
 
 export interface GlobalStatus {
   version: string;
@@ -9,7 +10,7 @@ export interface GlobalStatus {
 }
 
 const DEFAULT_GLOBAL_STATUS: GlobalStatus = {
-  version: '1.0',
+  version: packageVersion,
   activeProject: null,
 };
 

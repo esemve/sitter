@@ -3,6 +3,7 @@ import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { validateStatusTransition, assertProjectExists, assertActiveProject } from './validation.js';
+import { packageVersion } from '../utils/version.js';
 
 let originalCwd: string;
 
@@ -59,7 +60,7 @@ describe('state/validation', () => {
       mkdirSync(join(tempDir, 'sitter'), { recursive: true });
       writeFileSync(
         join(tempDir, 'sitter', '.status.json'),
-        JSON.stringify({ version: '1.0', activeProject: 'active-proj' }),
+        JSON.stringify({ version: packageVersion, activeProject: 'active-proj' }),
         'utf-8'
       );
 
@@ -71,7 +72,7 @@ describe('state/validation', () => {
       mkdirSync(join(tempDir, 'sitter'), { recursive: true });
       writeFileSync(
         join(tempDir, 'sitter', '.status.json'),
-        JSON.stringify({ version: '1.0', activeProject: null }),
+        JSON.stringify({ version: packageVersion, activeProject: null }),
         'utf-8'
       );
 

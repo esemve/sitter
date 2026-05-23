@@ -10,6 +10,7 @@ import {
   settingsPath,
 } from '../utils/paths.js';
 import { isInitialized } from '../utils/validation.js';
+import { packageVersion } from '../utils/version.js';
 
 export async function init(): Promise<void> {
   if (isInitialized()) {
@@ -21,7 +22,7 @@ export async function init(): Promise<void> {
   await mkdir(sitterProjectsDir(), { recursive: true });
   await mkdir(sitterArchiveDir(), { recursive: true });
 
-  const globalStatus = { version: '1.0', activeProject: null };
+  const globalStatus = { version: packageVersion, activeProject: null };
   await writeFile(globalStatusPath(), JSON.stringify(globalStatus, null, 2), 'utf-8');
 
   await writeFile(taskTemplatePath(), '', 'utf-8');

@@ -8,6 +8,7 @@ import { projects } from './projects.js';
 import { projectActive, projectDrop } from './project.js';
 import { status } from './status.js';
 import { activeVision } from './active-vision.js';
+import { packageVersion } from '../utils/version.js';
 
 let originalCwd: string;
 
@@ -53,7 +54,7 @@ describe('commands integration', () => {
       expect(existsSync(join(tempDir, 'sitter', 'settings.yaml'))).toBe(true);
 
       const statusContent = readFileSync(join(tempDir, 'sitter', '.status.json'), 'utf-8');
-      expect(JSON.parse(statusContent)).toEqual({ version: '1.0', activeProject: null });
+      expect(JSON.parse(statusContent)).toEqual({ version: packageVersion, activeProject: null });
 
       const taskContent = readFileSync(join(tempDir, 'sitter', 'TASK.md'), 'utf-8');
       expect(taskContent).toBe('');

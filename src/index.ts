@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { program, CommanderError } from 'commander';
-import { readFileSync } from 'fs';
 import chalk from 'chalk';
 import { error } from './utils/output.js';
+import { packageVersion } from './utils/version.js';
 import { init } from './commands/init.js';
 import { visionCreate } from './commands/vision.js';
 import { projects } from './commands/projects.js';
@@ -15,15 +15,10 @@ import { archive } from './commands/archive.js';
 import { review } from './commands/review.js';
 import { handleInstall } from './commands/install-action.js';
 
-import { resolveFromPackage } from './utils/package-root.js';
-
-const packageJsonPath = resolveFromPackage('package.json');
-const { version } = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-
 program
   .name('sitter')
   .description('A TypeScript CLI tool for AI agent workflow management')
-  .version(version);
+  .version(packageVersion);
 
 program
   .command('init')

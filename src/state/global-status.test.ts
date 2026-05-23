@@ -3,6 +3,7 @@ import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { readGlobalStatus, writeGlobalStatus } from './global-status.js';
+import { packageVersion } from '../utils/version.js';
 
 let originalCwd: string;
 
@@ -23,7 +24,7 @@ describe('global-status', () => {
   describe('readGlobalStatus', () => {
     it('returns default when file does not exist', async () => {
       const status = await readGlobalStatus();
-      expect(status).toEqual({ version: '1.0', activeProject: null });
+      expect(status).toEqual({ version: packageVersion, activeProject: null });
     });
 
     it('reads existing global status', async () => {
@@ -50,7 +51,7 @@ describe('global-status', () => {
       writeFileSync(join(tempDir, 'sitter', '.status.json'), JSON.stringify({}), 'utf-8');
 
       const status = await readGlobalStatus();
-      expect(status).toEqual({ version: '1.0', activeProject: null });
+      expect(status).toEqual({ version: packageVersion, activeProject: null });
     });
 
     it('handles activeProject as string', async () => {
@@ -62,7 +63,7 @@ describe('global-status', () => {
       );
 
       const status = await readGlobalStatus();
-      expect(status).toEqual({ version: '1.0', activeProject: 'another-project' });
+      expect(status).toEqual({ version: packageVersion, activeProject: 'another-project' });
     });
   });
 
@@ -76,7 +77,7 @@ describe('global-status', () => {
     });
 
     it('creates parent directories if needed', async () => {
-      const status = { version: '1.0', activeProject: null };
+      const status = { version: packageVersion, activeProject: null };
       await writeGlobalStatus(status);
 
       const result = await readGlobalStatus();
@@ -91,7 +92,7 @@ describe('global-status', () => {
         'utf-8'
       );
 
-      const status = { version: '1.0', activeProject: 'new' };
+      const status = { version: packageVersion, activeProject: 'new' };
       await writeGlobalStatus(status);
 
       const result = await readGlobalStatus();

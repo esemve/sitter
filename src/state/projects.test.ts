@@ -3,6 +3,7 @@ import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { listProjects, projectExists, isProjectActive } from './projects.js';
+import { packageVersion } from '../utils/version.js';
 
 let originalCwd: string;
 
@@ -67,7 +68,7 @@ describe('projects', () => {
       mkdirSync(join(tempDir, 'sitter'), { recursive: true });
       writeFileSync(
         join(tempDir, 'sitter', '.status.json'),
-        JSON.stringify({ version: '1.0', activeProject: 'my-project' }),
+        JSON.stringify({ version: packageVersion, activeProject: 'my-project' }),
         'utf-8'
       );
 
@@ -78,7 +79,7 @@ describe('projects', () => {
       mkdirSync(join(tempDir, 'sitter'), { recursive: true });
       writeFileSync(
         join(tempDir, 'sitter', '.status.json'),
-        JSON.stringify({ version: '1.0', activeProject: 'other-project' }),
+        JSON.stringify({ version: packageVersion, activeProject: 'other-project' }),
         'utf-8'
       );
 
@@ -89,7 +90,7 @@ describe('projects', () => {
       mkdirSync(join(tempDir, 'sitter'), { recursive: true });
       writeFileSync(
         join(tempDir, 'sitter', '.status.json'),
-        JSON.stringify({ version: '1.0', activeProject: null }),
+        JSON.stringify({ version: packageVersion, activeProject: null }),
         'utf-8'
       );
 
