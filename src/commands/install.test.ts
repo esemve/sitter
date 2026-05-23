@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, mkdirSync, chmodSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { install, extractBody, generateSkillFrontmatter, generateCommandFile, getTargetPath, getCommandTargetPath, SKILL_NAMES } from './install.js';
+import { packageVersion } from '../utils/version.js';
 
 let mockHomeDir = '/default-home';
 
@@ -78,6 +79,7 @@ describe('install command', () => {
       expect(skillContent).toMatch(/^---\n/);
       expect(skillContent).toContain(`name: ${skill}`);
       expect(skillContent).toContain('description:');
+      expect(skillContent).toContain(`version: ${packageVersion}`);
       expect(skillContent).not.toContain('when_to_use:');
       expect(skillContent).toContain(`# /${skill}`);
 
@@ -88,6 +90,7 @@ describe('install command', () => {
       const commandContent = readFileSync(commandPath, 'utf-8');
       expect(commandContent).toMatch(/^---\n/);
       expect(commandContent).toContain('description:');
+      expect(commandContent).toContain(`version: ${packageVersion}`);
       expect(commandContent).toContain(`Load and execute the "${skill}" skill.`);
     }
   });
@@ -105,6 +108,7 @@ describe('install command', () => {
       expect(content).toMatch(/^---\n/);
       expect(content).toContain(`name: ${skill}`);
       expect(content).toContain('description:');
+      expect(content).toContain(`version: ${packageVersion}`);
       expect(content).toContain('when_to_use:');
       expect(content).not.toContain('model:');
       expect(content).toContain(`# /${skill}`);
@@ -121,6 +125,7 @@ describe('install command', () => {
       expect(skillContent).toMatch(/^---\n/);
       expect(skillContent).toContain(`name: ${skill}`);
       expect(skillContent).toContain('description:');
+      expect(skillContent).toContain(`version: ${packageVersion}`);
       expect(skillContent).not.toContain('when_to_use:');
       expect(skillContent).toContain(`# /${skill}`);
       const commandPath = join(tempHome, '.config', 'kilo', 'commands', `${skill}.md`);
@@ -128,6 +133,7 @@ describe('install command', () => {
       const commandContent = readFileSync(commandPath, 'utf-8');
       expect(commandContent).toMatch(/^---\n/);
       expect(commandContent).toContain('description:');
+      expect(commandContent).toContain(`version: ${packageVersion}`);
       expect(commandContent).toContain(`Load and execute the "${skill}" skill.`);
     }
   });
@@ -167,6 +173,7 @@ describe('generateSkillFrontmatter', () => {
     const fm = generateSkillFrontmatter('opencode', 'sitter-vision');
     expect(fm).toContain('name: sitter-vision');
     expect(fm).toContain('description:');
+    expect(fm).toContain(`version: ${packageVersion}`);
     expect(fm).not.toContain('when_to_use');
     expect(fm).not.toContain('trigger');
   });
@@ -175,6 +182,7 @@ describe('generateSkillFrontmatter', () => {
     const fm = generateSkillFrontmatter('claude', 'sitter-vision');
     expect(fm).toContain('name: sitter-vision');
     expect(fm).toContain('description:');
+    expect(fm).toContain(`version: ${packageVersion}`);
     expect(fm).toContain('when_to_use:');
     expect(fm).not.toContain('model:');
   });
@@ -183,6 +191,7 @@ describe('generateSkillFrontmatter', () => {
     const fm = generateSkillFrontmatter('kilo', 'sitter-vision');
     expect(fm).toContain('name: sitter-vision');
     expect(fm).toContain('description:');
+    expect(fm).toContain(`version: ${packageVersion}`);
     expect(fm).not.toContain('when_to_use');
     expect(fm).not.toContain('trigger');
   });
@@ -192,6 +201,7 @@ describe('generateCommandFile', () => {
   it('generates opencode command file', () => {
     const cmd = generateCommandFile('opencode', 'sitter-vision');
     expect(cmd).toContain('description:');
+    expect(cmd).toContain(`version: ${packageVersion}`);
     expect(cmd).toContain('Load and execute the "sitter-vision" skill.');
   });
 
@@ -203,6 +213,7 @@ describe('generateCommandFile', () => {
   it('generates kilo command file', () => {
     const cmd = generateCommandFile('kilo', 'sitter-vision');
     expect(cmd).toContain('description:');
+    expect(cmd).toContain(`version: ${packageVersion}`);
     expect(cmd).toContain('Load and execute the "sitter-vision" skill.');
   });
 });

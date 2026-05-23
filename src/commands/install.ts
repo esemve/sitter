@@ -4,6 +4,7 @@ import { homedir } from 'os';
 import chalk from 'chalk';
 import { atomicWrite } from '../utils/atomic-write.js';
 import { resolveFromPackage } from '../utils/package-root.js';
+import { packageVersion } from '../utils/version.js';
 
 
 const DEFAULT_SOURCE_DIR = resolveFromPackage('skills', 'common');
@@ -62,11 +63,11 @@ export function extractBody(content: string): string {
 export function generateSkillFrontmatter(agent: string, skillName: string): string {
   const description = SKILL_DESCRIPTIONS[skillName] ?? skillName;
   if (agent === 'opencode' || agent === 'kilo') {
-    return `---\nname: ${skillName}\ndescription: ${description}\n---\n`;
+    return `---\nname: ${skillName}\ndescription: ${description}\nversion: ${packageVersion}\n---\n`;
   }
   if (agent === 'claude') {
     const whenToUse = `Use this skill when working with the Sitter CLI workflow for ${skillName.replace('sitter-', '')}.`;
-    return `---\nname: ${skillName}\ndescription: ${description}\nwhen_to_use: ${whenToUse}\n---\n`;
+    return `---\nname: ${skillName}\ndescription: ${description}\nversion: ${packageVersion}\nwhen_to_use: ${whenToUse}\n---\n`;
   }
   return '';
 }
@@ -74,7 +75,7 @@ export function generateSkillFrontmatter(agent: string, skillName: string): stri
 export function generateCommandFile(agent: string, skillName: string): string {
   const description = SKILL_DESCRIPTIONS[skillName] ?? skillName;
   if (agent === 'opencode' || agent === 'kilo') {
-    return `---\ndescription: ${description}\n---\n\nLoad and execute the "${skillName}" skill.\n`;
+    return `---\ndescription: ${description}\nversion: ${packageVersion}\n---\n\nLoad and execute the "${skillName}" skill.\n`;
   }
   return '';
 }
